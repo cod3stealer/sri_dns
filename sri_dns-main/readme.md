@@ -51,20 +51,70 @@ networks:
 
 # Procedimiento de creación de servicios (contenedores)
 
+   Se tiene que definir el servicio que se quiere correr y, en nuestro caso, este servicio será Bind9.
+   
+   Con el comando:
+   
    ```
-   docker up 
+   docker compose up  
+   ```
+   
+   Se consigue iniciar este servicio y se crea el documento "docker-compose.yml":
+   
+   ```
+   version: "3.3"
+services:
+ asir_bind9:
+   container_name: asir_bind9
+   image: internetsystemsconsortium/bind9:9.16
+   ports:
+     - 5300:53/udp
+     - 5300:53/tcp
+   volumes:
+     - /home/asir2a/Escritorio/SRI/tuto/bind9/conf:/etc/bind
+     - /home/asir2a/Escritorio/SRI/tuto/bind9/zonas:/var/lib/bind
+   networks:
+      Xd:
+        ipv4_address: 10.1.1.254
+ Xd_cliente:
+  container_name: Xd_cliente
+  image: alpine
+  networks:
+    - Xd
+  stdin_open: true
+  tty: true
+  dns:
+   - 10.1.1.254
+networks:
+  Xd:
+    external: true
    ```
 
 # Modificación de la configuración, arranque y parada de servicio bind9
 
+   Con los comandos de abajo se consigue el arranque y la parada del servicio bind9.
+   ```
    docker-compose up
    docker-compose down
+   ```
+   La configuración del serivico se encuentra en el documento "docker-compose.yml"
 
 # Configuración zona y como comprobar que funciona
 
-   /zonas
+   En el archivo llamado "named.conf.local" se encuentra la configuración de las zonas. Una de las formas de comprobar que este está activo es hacer ping al nombre de la zona.
+   ```
+   zone "asircastelao.com"  {
+    type master;
+    file "/var/lib/bind/db.asircastelao.com";
+    allow-query {
+        any;
+     };
+   };
+   ```
 
 # Entregar enlace al repositorio
+
+   **https://github.com/cod3stealer/sri_dns**
 
 # Práctica DNS
 
