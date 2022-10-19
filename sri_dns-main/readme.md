@@ -51,14 +51,18 @@ networks:
 
 # Procedimiento de creación de servicios (contenedores)
 
-
+   ```
+   docker up 
+   ```
 
 # Modificación de la configuración, arranque y parada de servicio bind9
 
-
+   docker-compose up
+   docker-compose down
 
 # Configuración zona y como comprobar que funciona
 
+   /zonas
 
 # Entregar enlace al repositorio
 
@@ -88,15 +92,46 @@ networks:
     Con el comando:
 
     docker network create --subnet 10.0.0.0/24 --gateway 10.0.0.1 Subnet_Contenedores
+    
+    Además, entro al documento.yml y añado una nueva subred en la sección **Networks** (explicada anteriormente).
 
 3. **IP fija en el servidor.**
 
+   En el mismo documento, hay que añadir una nueva linea de código para que el servidor obtenga una IP fija:
+   
+   ```
+   ipv4_address: X.X.X.X (en mi caso, pongo la IP "10.1.1.254")
+   ```
+
 4. **Configurar Forwarders.**
+
+   En el documento llamado "named.conf.options" se encuentra la sección llamada "forwarders" y es ahí donde se ha de    añadir o modificar la IP para el servidio DNS. En mi caso queda de esta manera:
+   
+   ```
+    forwarders {
+        8.8.8.8;
+        8.8.4.4;
+    };
+   ```
 
 5. **Crear Zona propia.**
 
+   En la misma ruta donde se encuentra el documento del apartado anterior se encuentra el archivo "named.conf.local", en el cual, hay que añadir una nueva línea de código (en mi caso se llamará, "asircastelao.com"):
+   
+   ```
+   zone "asircastelao.com"  {
+    type master;
+    file "/var/lib/bind/db.asircastelao.com";
+    allow-query {
+        any;
+     };
+   };
+   ```
+
 6. **Registros a configurar: NS, A, CNAME, TXT, SOA, MX.**
+
+   En el documento "db.asircastelao.int" está todo lo relacionado con las zonas, es aquí donde se tiene que configurar el alias que se le quiera dar.
 
 7. **Cliente con herramientas de red.**
 
-
+   Para realizar esta tarea hay que dirigirse al documento "docker-compose.yml" y crear un nuevo cliente indicando la network que se utilizará, además de indicar el nombre o el modo de arranque, por ejemplo.
