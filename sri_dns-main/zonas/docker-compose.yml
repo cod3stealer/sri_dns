@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+ asir_bind9:
+   container_name: asir_bind9
+   image: internetsystemsconsortium/bind9:9.16
+   ports:
+     - 5300:53/udp
+     - 5300:53/tcp
+   volumes:
+     - /home/asir2a/Escritorio/SRI/tuto/bind9/conf:/etc/bind
+     - /home/asir2a/Escritorio/SRI/tuto/bind9/zonas:/var/lib/bind
+   networks:
+      Xd:
+        ipv4_address: 10.1.1.254
+ Xd_cliente:
+  container_name: Xd_cliente
+  image: alpine
+  networks:
+    - Xd
+  stdin_open: true
+  tty: true
+  dns:
+   - 10.1.1.254
+networks:
+  Xd:
+    external: true
+  
